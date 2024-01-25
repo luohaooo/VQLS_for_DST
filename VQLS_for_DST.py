@@ -153,8 +153,8 @@ def calculate_cost_function(parameters):
 
             circ.save_statevector()
             t_circ = transpile(circ, backend)
-            qobj = assemble(t_circ)
-            job = backend.run(qobj)
+            # qobj = assemble(t_circ)
+            job = backend.run(circ)
 
             result = job.result()
             outputstate = np.array(result.get_statevector(circ, decimals=decimals_num))
@@ -182,8 +182,8 @@ def calculate_cost_function(parameters):
 
             circ.save_statevector()
             t_circ = transpile(circ, backend)
-            qobj = assemble(t_circ)
-            job = backend.run(qobj)
+            # qobj = assemble(t_circ)
+            job = backend.run(t_circ)
 
             result = job.result()
             outputstate = np.array(result.get_statevector(circ, decimals=decimals_num))
@@ -233,8 +233,8 @@ def calculate_cost_function(parameters):
 
                 circ.save_statevector()
                 t_circ = transpile(circ, backend)
-                qobj = assemble(t_circ)
-                job = backend.run(qobj)
+                # qobj = assemble(t_circ)
+                job = backend.run(t_circ)
 
                 result = job.result()
                 outputstate = np.array(result.get_statevector(circ, decimals=decimals_num))
@@ -262,8 +262,8 @@ def calculate_cost_function(parameters):
 
                 circ.save_statevector()
                 t_circ = transpile(circ, backend)
-                qobj = assemble(t_circ)
-                job = backend.run(qobj)
+                # qobj = assemble(t_circ)
+                job = backend.run(t_circ)
 
                 result = job.result()
                 outputstate = np.array(result.get_statevector(circ, decimals=decimals_num))
@@ -304,9 +304,18 @@ def calculate_cost_function(parameters):
 
     return abs(1 - float(overall_sum_2 / (overall_sum_1)))
 
+
+# Set the parameters for linear system: Ax = b
+
+# Set the matrix A
+# Here is an example of A is a transformation matrix MfrB
 coefficient_set = [1, -0.5, complex(0,0.5), -0.5, 0.25, complex(0, -0.25), complex(0, 0.5), complex(0, -0.25), -0.25]
 gate_set = [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]
+
+# Set the vector b
 mass_array = [0.05,0.3,0.1,0.55]
+
+# Calculate the parameters of preparing |b>
 b_paras = make_b_paras(mass_array)
 decimals_num = 100
 
@@ -314,14 +323,15 @@ total_mem = []
 total_calc_1 = []
 total_calc_2 = []
 
-iter_num = 1
+# Iteration Number of Independent Experiments
+iter_num = 20
 
 for i in range(iter_num):
     print("%%%%%%%%%%   Current Iter Num: ",i, "    %%%%%%%%%%")
     mem = []
     calc_1 = []
     calc_2 = []
-    out = minimize(calculate_cost_function, x0=[float(random.randint(0,3000))/1000 for i in range(0, 6)], method="COBYLA", options={'maxiter':10,'catol':1e-9})
+    out = minimize(calculate_cost_function, x0=[float(random.randint(0,3000))/1000 for i in range(0, 6)], method="COBYLA", options={'maxiter':100,'catol':1e-9})
     print(out)
     total_mem.append(mem)
     total_calc_1.append(calc_1)
